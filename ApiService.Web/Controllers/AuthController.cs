@@ -21,6 +21,28 @@ public class AuthController : ControllerBase
         return Ok(new { message = "Registration successful. Check your email to confirm." });
     }
 
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginRequest request)
+    {
+        var tokens = await _authService.LoginAsync(request.Email, request.Password);
+        if (tokens == null)
+        {
+            return Unauthorized();
+        }
+        return Ok(tokens);
+    }
+
+    [HttpPost("refresh-token")]
+    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
+    {
+        var tokens = await _authService.RefreshTokenAsync(request.RefreshToken);
+        if (tokens == null)
+        {
+            return Unauthorized();
+        }
+        return Ok(tokens);
+    }
+
     [HttpGet("confirm-email")]
     public async Task<IActionResult> ConfirmEmail([FromQuery] Guid userId, [FromQuery] string token)
     {
@@ -35,4 +57,6 @@ public class AuthController : ControllerBase
 }
 
 public record RegisterRequest(string Email, string Password);
+public record LoginRequest(string Email, string Password);
+public record RefreshTokenRequest(string RefreshToken);
 
