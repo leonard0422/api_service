@@ -1,0 +1,11 @@
+C:\Users\jarby\Documents\api_service\ApiService.Domain\bin\Debug\net9.0\ApiService.Domain.deps.json
+C:\Users\jarby\Documents\api_service\ApiService.Domain\bin\Debug\net9.0\ApiService.Domain.dll
+C:\Users\jarby\Documents\api_service\ApiService.Domain\bin\Debug\net9.0\ApiService.Domain.pdb
+C:\Users\jarby\Documents\api_service\ApiService.Domain\obj\Debug\net9.0\ApiService.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\jarby\Documents\api_service\ApiService.Domain\obj\Debug\net9.0\ApiService.Domain.AssemblyInfoInputs.cache
+C:\Users\jarby\Documents\api_service\ApiService.Domain\obj\Debug\net9.0\ApiService.Domain.AssemblyInfo.cs
+C:\Users\jarby\Documents\api_service\ApiService.Domain\obj\Debug\net9.0\ApiService.Domain.csproj.CoreCompileInputs.cache
+C:\Users\jarby\Documents\api_service\ApiService.Domain\obj\Debug\net9.0\ApiService.Domain.dll
+C:\Users\jarby\Documents\api_service\ApiService.Domain\obj\Debug\net9.0\refint\ApiService.Domain.dll
+C:\Users\jarby\Documents\api_service\ApiService.Domain\obj\Debug\net9.0\ApiService.Domain.pdb
+C:\Users\jarby\Documents\api_service\ApiService.Domain\obj\Debug\net9.0\ref\ApiService.Domain.dll

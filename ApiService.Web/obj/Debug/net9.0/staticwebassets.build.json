@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "MGqC8E/AdoumGrPfVkvuUW3HNH1hA6MKyBVZPvl2evM=",
+  "Source": "ApiService.Web",
+  "BasePath": "_content/ApiService.Web",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

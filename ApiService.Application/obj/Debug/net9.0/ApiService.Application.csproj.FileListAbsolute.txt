@@ -1,0 +1,15 @@
+C:\Users\jarby\Documents\api_service\ApiService.Application\bin\Debug\net9.0\ApiService.Application.deps.json
+C:\Users\jarby\Documents\api_service\ApiService.Application\bin\Debug\net9.0\ApiService.Application.dll
+C:\Users\jarby\Documents\api_service\ApiService.Application\bin\Debug\net9.0\ApiService.Application.pdb
+C:\Users\jarby\Documents\api_service\ApiService.Application\bin\Debug\net9.0\ApiService.Domain.dll
+C:\Users\jarby\Documents\api_service\ApiService.Application\bin\Debug\net9.0\ApiService.Domain.pdb
+C:\Users\jarby\Documents\api_service\ApiService.Application\obj\Debug\net9.0\ApiService.Application.csproj.AssemblyReference.cache
+C:\Users\jarby\Documents\api_service\ApiService.Application\obj\Debug\net9.0\ApiService.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\jarby\Documents\api_service\ApiService.Application\obj\Debug\net9.0\ApiService.Application.AssemblyInfoInputs.cache
+C:\Users\jarby\Documents\api_service\ApiService.Application\obj\Debug\net9.0\ApiService.Application.AssemblyInfo.cs
+C:\Users\jarby\Documents\api_service\ApiService.Application\obj\Debug\net9.0\ApiService.Application.csproj.CoreCompileInputs.cache
+C:\Users\jarby\Documents\api_service\ApiService.Application\obj\Debug\net9.0\ApiServi.9A95F946.Up2Date
+C:\Users\jarby\Documents\api_service\ApiService.Application\obj\Debug\net9.0\ApiService.Application.dll
+C:\Users\jarby\Documents\api_service\ApiService.Application\obj\Debug\net9.0\refint\ApiService.Application.dll
+C:\Users\jarby\Documents\api_service\ApiService.Application\obj\Debug\net9.0\ApiService.Application.pdb
+C:\Users\jarby\Documents\api_service\ApiService.Application\obj\Debug\net9.0\ref\ApiService.Application.dll
