@@ -54,9 +54,35 @@ public class AuthController : ControllerBase
 
         return Ok("Email confirmed.");
     }
+
+    [HttpPost("request-password-reset")]
+    public async Task<IActionResult> RequestPasswordReset([FromBody] RequestPasswordResetRequest request)
+    {
+        var success = await _authService.RequestPasswordResetAsync(request.Email);
+        if (!success)
+        {
+            return BadRequest("Invalid email.");
+        }
+
+        return Ok("Password reset email sent.");
+    }
+
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+    {
+        var success = await _authService.ResetPasswordAsync(request.UserId, request.Token, request.NewPassword);
+        if (!success)
+        {
+            return BadRequest("Invalid token.");
+        }
+
+        return Ok("Password reset successful.");
+    }
 }
 
 public record RegisterRequest(string Email, string Password);
 public record LoginRequest(string Email, string Password);
 public record RefreshTokenRequest(string RefreshToken);
+public record RequestPasswordResetRequest(string Email);
+public record ResetPasswordRequest(Guid UserId, string Token, string NewPassword);
 

@@ -74,4 +74,25 @@ public class UserRepository : IUserRepository
         }
         return Task.CompletedTask;
     }
+
+    public Task UpdatePasswordResetTokenAsync(Guid userId, string token, DateTime expiry)
+    {
+        if (_users.TryGetValue(userId, out var user))
+        {
+            user.PasswordResetToken = token;
+            user.PasswordResetTokenExpiry = expiry;
+        }
+        return Task.CompletedTask;
+    }
+
+    public Task UpdatePasswordAsync(Guid userId, string passwordHash)
+    {
+        if (_users.TryGetValue(userId, out var user))
+        {
+            user.PasswordHash = passwordHash;
+            user.PasswordResetToken = null;
+            user.PasswordResetTokenExpiry = null;
+        }
+        return Task.CompletedTask;
+    }
 }
