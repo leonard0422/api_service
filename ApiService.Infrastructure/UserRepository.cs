@@ -1,98 +1,108 @@
 using ApiService.Application;
 using ApiService.Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace ApiService.Infrastructure;
 
 public class UserRepository : IUserRepository
 {
-    private readonly Dictionary<Guid, User> _users = new();
+    private readonly ApiDbContext _context;
 
-    public Task<User> CreateAsync(User user)
+    public UserRepository(ApiDbContext context)
     {
-        _users[user.Id] = user;
-        return Task.FromResult(user);
+        _context = context;
+    }
+
+    public async Task<User> CreateAsync(User user)
+    {
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync();
+        return user;
     }
 
     public Task<User?> GetByIdAsync(Guid id)
     {
-        _users.TryGetValue(id, out var user);
-        return Task.FromResult(user);
+        return _context.Users.FindAsync(id).AsTask();
     }
 
     public Task<User?> GetByEmailAsync(string email)
     {
-        var user = _users.Values.FirstOrDefault(u => u.Email == email);
-        return Task.FromResult(user);
+        return _context.Users.FirstOrDefaultAsync(u => u.Email == email);
     }
 
-    public Task<IEnumerable<User>> GetAllAsync()
+    public async Task<IEnumerable<User>> GetAllAsync()
     {
-        IEnumerable<User> users = _users.Values;
-        return Task.FromResult(users);
+        return await _context.Users.ToListAsync();
     }
 
-    public Task UpdateAsync(User user)
+    public async Task UpdateAsync(User user)
     {
-        if (_users.ContainsKey(user.Id))
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(Guid id)
+    {
+        var user = await _context.Users.FindAsync(id);
+        if (user is not null)
         {
-            _users[user.Id] = user;
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
         }
-        return Task.CompletedTask;
     }
 
-    public Task DeleteAsync(Guid id)
+    public async Task UpdateEmailVerificationTokenAsync(Guid userId, string token)
     {
-        _users.Remove(id);
-        return Task.CompletedTask;
-    }
-
-    public Task UpdateEmailVerificationTokenAsync(Guid userId, string token)
-    {
-        if (_users.TryGetValue(userId, out var user))
+        var user = await _context.Users.FindAsync(userId);
+        if (user is not null)
         {
             user.EmailVerificationToken = token;
+            await _context.SaveChangesAsync();
         }
-        return Task.CompletedTask;
     }
 
-    public Task UpdateRefreshTokenAsync(Guid userId, string refreshToken, DateTime expiry)
+    public async Task UpdateRefreshTokenAsync(Guid userId, string refreshToken, DateTime expiry)
     {
-        if (_users.TryGetValue(userId, out var user))
+        var user = await _context.Users.FindAsync(userId);
+        if (user is not null)
         {
             user.RefreshToken = refreshToken;
             user.RefreshTokenExpiry = expiry;
+            await _context.SaveChangesAsync();
         }
-        return Task.CompletedTask;
     }
 
-    public Task SetEmailVerifiedAsync(Guid userId)
+    public async Task SetEmailVerifiedAsync(Guid userId)
     {
-        if (_users.TryGetValue(userId, out var user))
+        var user = await _context.Users.FindAsync(userId);
+        if (user is not null)
         {
             user.IsEmailVerified = true;
             user.EmailVerificationToken = null;
+            await _context.SaveChangesAsync();
         }
-        return Task.CompletedTask;
     }
 
-    public Task UpdatePasswordResetTokenAsync(Guid userId, string token, DateTime expiry)
+    public async Task UpdatePasswordResetTokenAsync(Guid userId, string token, DateTime expiry)
     {
-        if (_users.TryGetValue(userId, out var user))
+        var user = await _context.Users.FindAsync(userId);
+        if (user is not null)
         {
             user.PasswordResetToken = token;
             user.PasswordResetTokenExpiry = expiry;
+            await _context.SaveChangesAsync();
         }
-        return Task.CompletedTask;
     }
 
-    public Task UpdatePasswordAsync(Guid userId, string passwordHash)
+    public async Task UpdatePasswordAsync(Guid userId, string passwordHash)
     {
-        if (_users.TryGetValue(userId, out var user))
+        var user = await _context.Users.FindAsync(userId);
+        if (user is not null)
         {
             user.PasswordHash = passwordHash;
             user.PasswordResetToken = null;
             user.PasswordResetTokenExpiry = null;
+            await _context.SaveChangesAsync();
         }
-        return Task.CompletedTask;
     }
 }
