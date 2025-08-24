@@ -1,4 +1,10 @@
 using ApiService.Domain;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using System.Linq;
 
 namespace ApiService.Application;
 
@@ -6,11 +12,13 @@ public class AuthService : IAuthService
 {
     private readonly IUserRepository _userRepository;
     private readonly IEmailSender _emailSender;
+    private readonly IConfiguration _configuration;
 
-    public AuthService(IUserRepository userRepository, IEmailSender emailSender)
+    public AuthService(IUserRepository userRepository, IEmailSender emailSender, IConfiguration configuration)
     {
         _userRepository = userRepository;
         _emailSender = emailSender;
+        _configuration = configuration;
     }
 
     public async Task<User> RegisterAsync(string email, string password)
@@ -48,6 +56,75 @@ public class AuthService : IAuthService
 
         await _userRepository.SetEmailVerifiedAsync(userId);
         return true;
+    }
+
+    public async Task<AuthTokens?> LoginAsync(string email, string password)
+    {
+        var user = await _userRepository.GetByEmailAsync(email);
+        if (user == null)
+        {
+            return null;
+        }
+
+        var hash = Convert.ToBase64String(Encoding.UTF8.GetBytes(password));
+        if (user.PasswordHash != hash || !user.IsEmailVerified)
+        {
+            return null;
+        }
+
+        var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!);
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Email, user.Email)
+            }),
+            Expires = DateTime.UtcNow.AddMinutes(15),
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+        };
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        var accessToken = tokenHandler.WriteToken(token);
+
+        var refreshToken = Guid.NewGuid().ToString();
+        var expiry = DateTime.UtcNow.AddDays(7);
+        await _userRepository.UpdateRefreshTokenAsync(user.Id, refreshToken, expiry);
+
+        return new AuthTokens(accessToken, refreshToken);
+    }
+
+    public async Task<AuthTokens?> RefreshTokenAsync(string refreshToken)
+    {
+        var users = await _userRepository.GetAllAsync();
+        var user = users.FirstOrDefault(u => u.RefreshToken == refreshToken && u.RefreshTokenExpiry > DateTime.UtcNow);
+        if (user == null)
+        {
+            return null;
+        }
+
+        var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!);
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Email, user.Email)
+            }),
+            Expires = DateTime.UtcNow.AddMinutes(15),
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+        };
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        var accessToken = tokenHandler.WriteToken(token);
+
+        var newRefreshToken = Guid.NewGuid().ToString();
+        var expiry = DateTime.UtcNow.AddDays(7);
+        await _userRepository.UpdateRefreshTokenAsync(user.Id, newRefreshToken, expiry);
+
+        return new AuthTokens(accessToken, newRefreshToken);
     }
 }
 
