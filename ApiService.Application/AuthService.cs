@@ -126,5 +126,37 @@ public class AuthService : IAuthService
 
         return new AuthTokens(accessToken, newRefreshToken);
     }
+
+    public async Task<bool> RequestPasswordResetAsync(string email)
+    {
+        var user = await _userRepository.GetByEmailAsync(email);
+        if (user == null)
+        {
+            return false;
+        }
+
+        var token = Guid.NewGuid().ToString();
+        var expiry = DateTime.UtcNow.AddHours(1);
+        await _userRepository.UpdatePasswordResetTokenAsync(user.Id, token, expiry);
+
+        var body = $"Use the token to reset your password: {token}";
+        await _emailSender.SendEmailAsync(user.Email, "Reset your password", body);
+
+        return true;
+    }
+
+    public async Task<bool> ResetPasswordAsync(Guid userId, string token, string newPassword)
+    {
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null || user.PasswordResetToken != token || user.PasswordResetTokenExpiry < DateTime.UtcNow)
+        {
+            return false;
+        }
+
+        var newHash = Convert.ToBase64String(Encoding.UTF8.GetBytes(newPassword));
+        await _userRepository.UpdatePasswordAsync(user.Id, newHash);
+
+        return true;
+    }
 }
 

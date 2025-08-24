@@ -13,4 +13,6 @@ public interface IUserRepository
     Task UpdateEmailVerificationTokenAsync(Guid userId, string token);
     Task UpdateRefreshTokenAsync(Guid userId, string refreshToken, DateTime expiry);
     Task SetEmailVerifiedAsync(Guid userId);
+    Task UpdatePasswordResetTokenAsync(Guid userId, string token, DateTime expiry);
+    Task UpdatePasswordAsync(Guid userId, string passwordHash);
 }
