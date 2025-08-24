@@ -1,0 +1,18 @@
+# Directorios de compilación en todas las carpetas
+**/bin/
+**/obj/
+**/out/
+
+# Configuración local
+.vs/
+*.user
+*.suo
+
+# Bases de datos y logs locales
+*.log
+*.sqlite
+*.db
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
