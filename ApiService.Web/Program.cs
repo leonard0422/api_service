@@ -1,9 +1,15 @@
+using ApiService.Application;
+using ApiService.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Services (API only)
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(); // ← Swagger UI
+builder.Services.AddSingleton<IUserRepository, UserRepository>();
+builder.Services.AddSingleton<IEmailSender, EmailSender>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 
